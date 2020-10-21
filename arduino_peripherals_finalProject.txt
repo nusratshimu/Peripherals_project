@@ -1,0 +1,93 @@
+#define USE_ARDUINO_INTERRUPTS true
+#include <PulseSensorPlayground.h>
+#include<LiquidCrystal.h>
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+
+const int PulseWire = 2; 
+const int LED13 = 13; 
+int Threshold = 550; 
+
+PulseSensorPlayground pulseSensor;
+
+
+
+void setup() {
+ 
+Serial.begin(9600); 
+lcd.begin(16,2);
+
+/*lcd.setCursor(0,0);
+lcd.print("BRISTY");
+delay(1000);
+
+lcd.setCursor(0,0);
+lcd.print("Aparna");
+delay(1000);
+
+lcd.setCursor(0,0);
+lcd.print("Shimu");
+delay(1000);
+
+lcd.setCursor(0,0);
+lcd.print("Akhi");
+delay(1000);
+
+lcd.setCursor(0,0);
+lcd.print("Oishi");
+delay(1000);*/
+
+
+pulseSensor.analogInput(PulseWire);
+pulseSensor.blinkOnPulse(LED13); 
+pulseSensor.setThreshold(Threshold);
+
+if (pulseSensor.begin()) {
+Serial.println("We created a pulseSensor Object !"); 
+lcd.setCursor(2,0);
+lcd.print(" Heart Rate ");
+
+}
+}
+
+void loop() {
+ 
+int myBPM = pulseSensor.getBeatsPerMinute(); 
+
+if (pulseSensor.sawStartOfBeat()) { 
+Serial.println("♥ A HeartBeat Happened ! "); 
+Serial.print("BPM: "); 
+Serial.println(myBPM); 
+
+lcd.setCursor(1,1);
+lcd.print("   BPM: "); 
+lcd.print(myBPM);
+lcd.print("            ");
+delay(800);
+
+
+
+
+if(myBPM<60){
+
+lcd.setCursor(1,1);
+lcd.print("Low Heart Rate"); 
+
+}
+
+else if(myBPM>100){
+lcd.setCursor(1,1);
+lcd.print("Fast Heart Rate"); 
+
+}
+else{
+  lcd.setCursor(1,1);
+lcd.print("   Normal         "); 
+
+}
+
+
+}
+delay(20); 
+
+}
